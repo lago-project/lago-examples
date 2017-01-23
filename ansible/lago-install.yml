@@ -14,7 +14,7 @@
         dest: /etc/yum.repos.d/ovirt-ci-tools.repo
 
     - name: Install lago and dependencies
-      yum: name={{ item }} state=latest
+      yum: name={{ item }} state=installed update_cache=yes
       with_items:
         - lago
         - lago-ovirt
@@ -51,4 +51,5 @@
       git:
         repo: git://gerrit.ovirt.org/ovirt-system-tests
         dest: /home/ovirt/ovirt-system-tests
+        depth: 1
       become_user: ovirt
