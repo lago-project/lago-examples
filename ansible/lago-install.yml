@@ -14,7 +14,7 @@
         dest: /etc/yum.repos.d/ovirt-ci-tools.repo
 
     - name: Install lago and dependencies
-      yum: name={{ item }} state=present
+      yum: name={{ item }} state=latest
       with_items:
         - lago
         - lago-ovirt
