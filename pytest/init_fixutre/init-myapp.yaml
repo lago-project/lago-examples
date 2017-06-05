@@ -1,0 +1,40 @@
+domains:
+  myapp-server:
+    memory: 1024
+    nics:
+      - net: net1
+    disks:
+      - template_name: el7.3-base
+        type: template
+        name: root
+        dev: sda
+        format: qcow2
+    artifacts:
+     - /var/log/myapp
+    metadata:
+      deploy-scripts:
+        - $LAGO_INITFILE_PATH/install_scripts/setup_server.sh
+
+  myapp-client:
+    memory: 1024
+    nics:
+      - net: net1
+    disks:
+      - template_name: ubuntu16.04-base
+        type: template
+        name: root
+        dev: sda
+        format: qcow2
+    metadata:
+      deploy-scripts:
+        - $LAGO_INITFILE_PATH/install_scripts/setup_client.sh
+    artifacts:
+      - /var/log/myapp
+
+
+nets:
+  net1:
+    type: nat
+    dhcp:
+      start: 100
+      end: 254
