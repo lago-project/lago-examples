@@ -1,0 +1,62 @@
+domains:
+  vm-host:
+    memory: 2048
+    nics:
+      - net: management
+      - net: failover
+    disks:
+      - template_name: fc25-base
+        type: template
+        name: root
+        dev: sda
+        format: qcow2
+
+  vm-storage:
+    memory: 1024
+    nics:
+      - net: management
+      - net: storage
+      - net: storage
+    disks:
+      - template_name: debian8-base
+        type: template
+        name: root
+        dev: sda
+        format: qcow2
+      - comment: Main Storage device
+        size: 100G
+        type: empty
+        name: nfs
+        dev: sdb
+        format: raw
+
+  vm-client:
+    memory: 1024
+    nics:
+      - net: management
+      - net: storage
+    disks:
+      - template_name: el7.3-base
+        type: template
+        name: root
+        dev: sda
+        format: qcow2
+nets:
+  management:
+    type: nat
+    dhcp:
+      start: 100
+      end: 254
+    dns_records:
+      'www.google.com': '127.0.0.1'
+    management: true
+  storage:
+    type: nat
+    dhcp:
+      start: 100
+      end: 254
+  failover:
+    type: nat
+    dhcp:
+      start: 100
+      end: 127
