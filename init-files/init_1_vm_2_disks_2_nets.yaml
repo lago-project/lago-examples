@@ -1,0 +1,37 @@
+domains:
+  ubuntu-16.04:
+    memory: 1024
+    nics:
+      - net: net-02
+      - net: net-01
+    disks:
+      - template_name: ubuntu-16.04-base
+        type: template
+        name: root
+        dev: sda
+        format: qcow2
+      - type: empty
+        name: data
+        dev: sdb
+        format: qcow2
+        size: 10G
+    artifacts:
+      - /var/log
+    metadata:
+      deploy-scripts:
+        - $LAGO_INITFILE_PATH/deps.sh
+nets:
+  net-01:
+    type: nat
+    dhcp:
+      start: 100
+      end: 254
+    management: true
+    dns_domain_name: lago.local
+
+  net-02:
+    type: nat
+    gw: 192.168.210.4
+    dhcp:
+      start: 100
+      end: 254

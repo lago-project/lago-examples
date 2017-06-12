@@ -1,0 +1,93 @@
+# This examples requires the 'lago-ost-plugin' installed
+# from https://github.com/lago-project/lago-ost-plugin
+# and is used by the 'oVirt system tests' project:
+# https://ovirt-system-tests.readthedocs.io/en/latest/
+#
+# Few things to note:
+# 1. Usage of different vm-types, which lago-ost-plugin provides.
+# 2. Using deploy scripts to setup the environment
+# 3. Using several NICs from the same network, which
+#    are later used to create bonding.
+# 4. Some YAML magic to shorten the file.
+
+nat-settings: &nat-settings
+    type: nat
+    dhcp:
+      start: 100
+      end: 254
+    management: False
+
+vm-common-settings: &vm-common-settings
+    root-password: 123456
+    service_provider: systemd
+    artifacts:
+      - /var/log
+
+vdsm-host-settings: &vdsm-host-settings
+    <<: *vm-common-settings
+    vm-type: ovirt-host
+    memory: 2047
+    nics:
+      - net: lago-basic-suite-master-net-management
+      - net: lago-basic-suite-master-net-storage
+      - net: lago-basic-suite-master-net-bonding
+      - net: lago-basic-suite-master-net-bonding
+    disks:
+      - template_name: el7.3-base
+        type: template
+        name: root
+        dev: vda
+        format: qcow2
+    metadata:
+      deploy-scripts:
+        - $LAGO_INITFILE_PATH/../common/deploy-scripts/add_local_repo.sh
+        - $LAGO_INITFILE_PATH/../common/deploy-scripts/setup_host_el7.sh
+
+domains:
+  lago-basic-suite-master-engine:
+    <<: *vm-common-settings
+    vm-type: ovirt-engine
+    memory: 4096
+    nics:
+      - net: lago-basic-suite-master-net-management
+      - net: lago-basic-suite-master-net-storage
+    disks:
+      - template_name: el7.3-base
+        type: template
+        name: root
+        dev: vda
+        format: qcow2
+      - comment: Main NFS device
+        size: 101G
+        type: empty
+        name: nfs
+        dev: sda
+        format: raw
+      - comment: Main iSCSI device
+        size: 101G
+        type: empty
+        name: iscsi
+        dev: sdc
+        format: raw
+    metadata:
+      ovirt-engine-password: 123
+      deploy-scripts:
+        - $LAGO_INITFILE_PATH/../common/deploy-scripts/add_local_repo.sh
+        - $LAGO_INITFILE_PATH/../common/deploy-scripts/setup_storage_unified_el7.sh
+        - $LAGO_INITFILE_PATH/../common/deploy-scripts/setup_engine.sh
+
+  lago-basic-suite-master-host0:
+    <<: *vdsm-host-settings
+
+  lago-basic-suite-master-host1:
+    <<: *vdsm-host-settings
+
+nets:
+  lago-basic-suite-master-net-management:
+    <<: *nat-settings
+    management: true
+    dns_domain_name: lago.local
+  lago-basic-suite-master-net-bonding:
+    <<: *nat-settings
+  lago-basic-suite-master-net-storage:
+    <<: *nat-settings
