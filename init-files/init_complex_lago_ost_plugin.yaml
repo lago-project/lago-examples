@@ -33,7 +33,7 @@ vdsm-host-settings: &vdsm-host-settings
       - net: lago-basic-suite-master-net-bonding
       - net: lago-basic-suite-master-net-bonding
     disks:
-      - template_name: el7.3-base
+      - template_name: el7.4-base-1
         type: template
         name: root
         dev: vda
@@ -52,7 +52,7 @@ domains:
       - net: lago-basic-suite-master-net-management
       - net: lago-basic-suite-master-net-storage
     disks:
-      - template_name: el7.3-base
+      - template_name: el7.4-base-1
         type: template
         name: root
         dev: vda
