@@ -5,7 +5,7 @@ domains:
       - net: management
       - net: failover
     disks:
-      - template_name: fc25-base
+      - template_name: fc27-base
         type: template
         name: root
         dev: sda
@@ -36,7 +36,7 @@ domains:
       - net: management
       - net: storage
     disks:
-      - template_name: el7.3-base
+      - template_name: el7.4-base-1
         type: template
         name: root
         dev: sda
